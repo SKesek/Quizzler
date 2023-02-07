@@ -1,3 +1,4 @@
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter/material.dart';
 import 'quiz_brain.dart';
 
@@ -38,6 +39,33 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+    setState(() {
+      if (quizBrain.isFinished() == true) {
+        Alert(
+          context: context,
+          title: 'Finished!',
+          desc: 'You\'ve reached the end of the quiz.',
+        ).show();
+        quizBrain.reset();
+        scoreKeeper = [];
+      } else {
+        if (userPickedAnswer == correctAnswer) {
+          scoreKeeper.add(
+            const Icon(Icons.check, color: Colors.green),
+          );
+        } else {
+          scoreKeeper.add(
+            const Icon(Icons.close, color: Colors.red),
+          );
+        }
+
+        quizBrain.nextQuestion();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -64,13 +92,7 @@ class _QuizPageState extends State<QuizPage> {
               color: Colors.green,
               child: TextButton(
                   onPressed: () {
-                    bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                    if (correctAnswer == true) {
-                    } else {}
-                    setState(() {
-                      quizBrain.nextQuestion();
-                    });
+                    checkAnswer(true);
                   },
                   child: const Text(
                     'True',
@@ -86,13 +108,7 @@ class _QuizPageState extends State<QuizPage> {
               color: Colors.red,
               child: TextButton(
                 onPressed: () {
-                  bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                  if (correctAnswer == false) {
-                  } else {}
-                  setState(() {
-                    quizBrain.nextQuestion();
-                  });
+                  checkAnswer(false);
                 },
                 child: const Text(
                   'False',
